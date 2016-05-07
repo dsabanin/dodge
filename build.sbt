@@ -1,8 +1,8 @@
-import com.lihaoyi.workbench.Plugin._
+//import com.lihaoyi.workbench.Plugin._
 
 enablePlugins(ScalaJSPlugin)
 
-workbenchSettings
+//workbenchSettings
 
 name := "Dodge"
 
@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
   "com.lihaoyi" %%% "scalatags" % "0.5.4"
 )
 
-bootSnippet := "skullbeware.Dodge().main();"
-
-updateBrowsers <<= updateBrowsers.triggeredBy(fastOptJS in Compile)
-
+// bootSnippet := "skullbeware.Dodge().main();"
+//
+//updateBrowsers <<= updateBrowsers.triggeredBy(fastOptJS in Compile)
+//
