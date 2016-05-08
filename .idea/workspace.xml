@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6691ae6b-42f2-4ffb-8ec0-d618fc01e877" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/skullbeware/Bullet.scala" afterPath="$PROJECT_DIR$/src/main/scala/skullbeware/Bullet.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/skullbeware/Dodge.scala" afterPath="$PROJECT_DIR$/src/main/scala/skullbeware/Dodge.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/skullbeware/Obstacle.scala" afterPath="$PROJECT_DIR$/src/main/scala/skullbeware/Obstacle.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/skullbeware/ObstacleGroup.scala" afterPath="$PROJECT_DIR$/src/main/scala/skullbeware/ObstacleGroup.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/skullbeware/Player.scala" afterPath="$PROJECT_DIR$/src/main/scala/skullbeware/Player.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/skullbeware/Renderable.scala" afterPath="$PROJECT_DIR$/src/main/scala/skullbeware/Renderable.scala" />
     </list>
     <ignored path="tictactoe.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -78,8 +73,8 @@
       <file leaf-file-name="Player.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/skullbeware/Player.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="628">
-              <caret line="21" column="24" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
+            <state relative-caret-position="1135">
+              <caret line="87" column="16" selection-start-line="87" selection-start-column="16" selection-end-line="87" selection-end-column="16" />
               <folding>
                 <element signature="e#21#43#0" expanded="true" />
               </folding>
@@ -1468,12 +1463,12 @@
       <workItem from="1462565352076" duration="244000" />
       <workItem from="1462565624792" duration="14811000" />
       <workItem from="1462581709562" duration="7214000" />
-      <workItem from="1462588957632" duration="31052000" />
+      <workItem from="1462588957632" duration="31169000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="53321000" />
+    <option name="totallyTimeSpent" value="53438000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="2880" height="1800" extended-state="0" />
@@ -1765,8 +1760,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/skullbeware/Player.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="628">
-          <caret line="21" column="24" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
+        <state relative-caret-position="1135">
+          <caret line="87" column="16" selection-start-line="87" selection-start-column="16" selection-end-line="87" selection-end-column="16" />
           <folding>
             <element signature="e#21#43#0" expanded="true" />
           </folding>

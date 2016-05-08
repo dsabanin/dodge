@@ -46,6 +46,14 @@ class Player(private var xCoord: Int = Dodge.screenWidth / 2 - Player.width / 2,
     }
   }
 
+  def moveUp(): Unit = {
+    yCoord -= speed
+  }
+
+  def moveDown(): Unit = {
+    yCoord += speed
+  }
+
   def initiateShoot() = {
     bullets += Bullet.generate(x + width / 2, y)
   }
@@ -72,6 +80,12 @@ class Player(private var xCoord: Int = Dodge.screenWidth / 2 - Player.width / 2,
     }
     if (kbd.isPressed("ArrowRight")) {
       moveRight()
+    }
+    if (kbd.isPressed("ArrowUp")) {
+      moveUp()
+    }
+    if (kbd.isPressed("ArrowDown")) {
+      moveDown()
     }
     if (kbd.isPressed(" ")) {
       if (System.currentTimeMillis() - lastShooting > shootingDelay) {
