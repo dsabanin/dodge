@@ -27,7 +27,16 @@ object ObstacleGroup {
                       """X..X..X
                         |...X...""",
                       """XXXXXXX
-                        |X.....X""")
+                        |X.....X""",
+                      """.XX.XX.
+                        |.XXXXX.
+                        |.XXXXX.
+                        |..XXX..
+                        |...X...""",
+                      """.XXXXX.
+                        |..XXX..
+                        |.......
+                        |...X...""")
 
   def generate: ObstacleGroup = {
     new ObstacleGroup(Random.shuffle(layouts).head)

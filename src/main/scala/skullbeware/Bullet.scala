@@ -7,15 +7,19 @@ object Bullet {
 
   val height = 20
 
-  def generate(x: Double, y: Double): Bullet = {
+  def generate(x: Int, y: Int): Bullet = {
     new Bullet(x - width / 2, y - height)
   }
 }
-class Bullet(private var xCoord: Double = 0,
-             private var yCoord: Double = 0,
-             val step: Double = 30,
-             val width: Double = Bullet.width,
-             val height: Double = Bullet.height) extends Renderable {
+
+class Bullet(private var xCoord: Int = 0,
+             private var yCoord: Int = 0,
+             val step: Int = 20,
+             val width: Int = Bullet.width,
+             val height: Int = Bullet.height) extends Renderable {
+
+  var destroyed = false
+
   def x = xCoord
 
   def y = yCoord
@@ -29,5 +33,9 @@ class Bullet(private var xCoord: Double = 0,
     yCoord -= step // + (Math.random()*10)
   }
 
-  def isGone = yCoord < 0
+  def destroy(): Unit = {
+    destroyed = true
+  }
+
+  def isGone = destroyed || yCoord < 0
 }

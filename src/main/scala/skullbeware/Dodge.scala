@@ -14,17 +14,19 @@ import scalatags.JsDom.all._
   val obstacleGenSpeed = 70
   val screenWidth = 600
   val screenHeight = 600
+  var obstacleGroupLimit = 5
   val mainCanvas = createCanvas()
   val mainCtx = canvasCtx(mainCanvas)
   val bufferCanvas = createCanvas(hide = true)
   val bufferCtx = canvasCtx(bufferCanvas)
   var player = new Player
   var obstacleGroups: mutable.Set[ObstacleGroup] = mutable.Set()
-  var obstacleGroupLimit = 5
+  val kbd = new KeyboardInput
 
   @JSExport def main(): Unit = {
     clear(mainCtx)
-    dom.document.addEventListener("keydown", keydown _)
+    dom.document.addEventListener("keydown", kbd.down _, false)
+    dom.document.addEventListener("keyup", kbd.up _, false)
     dom.setInterval(generateObstacleGroups _, obstacleGenSpeed)
     dom.window.requestAnimationFrame(loop _)
   }
@@ -42,7 +44,8 @@ import scalatags.JsDom.all._
 
   def canvasCtx(canvas: html.Canvas) = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
-  def loop(something: Double): Unit = {
+  def loop(timer: Double): Unit = {
+    player.update(kbd)
     moveObstacle()
     player.moveBullets()
     shootObstacles()
@@ -62,7 +65,8 @@ import scalatags.JsDom.all._
   def shootObstacles(): Unit = {
     for (bullet <- player.bullets) {
       for (touchingGrp <- obstacleGroups.filter(isTouchingGroup(_, bullet))) {
-        touchingGrp.obstacles.filter(isTouching(_, bullet)).map(_.destroy)
+        touchingGrp.obstacles.filter(isTouching(_, bullet)).map(_.destroy())
+        bullet.destroy()
       }
     }
   }
@@ -114,19 +118,5 @@ import scalatags.JsDom.all._
         obstacleGroups -= obstacleGrp
       }
     }
-  }
-
-  def keydown(evt: dom.KeyboardEvent): Boolean = {
-    evt.stopImmediatePropagation()
-    evt.stopPropagation()
-    evt.preventDefault()
-    
-    evt.key match {
-      case "ArrowLeft" => player.moveLeft()
-      case "ArrowRight" => player.moveRight()
-      case " " => player.initiateShoot()
-      case _ => return true
-    }
-    false
   }
 }

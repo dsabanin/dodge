@@ -11,22 +11,22 @@ object Obstacle {
 
   def height = 40
 
-  def generate(speed: Double,
-               x: Option[Double] = None): Obstacle = {
-    val realX: Double = x.getOrElse {
+  def generate(speed: Int,
+               x: Option[Int] = None): Obstacle = {
+    val realX: Int = x.getOrElse {
       Random.shuffle(0 to (Dodge.screenWidth - Obstacle.width)).head
     }
-    new Obstacle(realX, 0, speed)
+    new Obstacle(realX, -Obstacle.height, speed)
   }
 
   def image = img(src := "skull.jpg").render
 }
 
-class Obstacle(private var xCoord: Double = 0,
-               private var yCoord: Double = 0,
-               val speed: Double = 10,
-               val width: Double = Obstacle.width,
-               val height: Double = Obstacle.height) extends Renderable {
+class Obstacle(private var xCoord: Int = 0,
+               private var yCoord: Int = 0,
+               val speed: Int = 10,
+               val width: Int = Obstacle.width,
+               val height: Int = Obstacle.height) extends Renderable {
 
   var destroyed = false
 
@@ -42,7 +42,7 @@ class Obstacle(private var xCoord: Double = 0,
     ctx.drawImage(Obstacle.image, x, y, width, height)
   }
 
-  def isGone = destroyed || (yCoord + height > Dodge.screenHeight)
+  def isGone = destroyed || (yCoord - height > Dodge.screenHeight)
 
   def destroy(): Unit = {
     destroyed = true

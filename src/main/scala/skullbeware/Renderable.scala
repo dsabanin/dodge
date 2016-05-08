@@ -3,13 +3,13 @@ package skullbeware
 import org.scalajs.dom
 
 trait Renderable {
-  def x: Double
+  def x: Int
 
-  def y: Double
+  def y: Int
 
-  def width: Double
+  def width: Int
 
-  def height: Double
+  def height: Int
 
   def drawOn(ctx: dom.CanvasRenderingContext2D): Unit
 

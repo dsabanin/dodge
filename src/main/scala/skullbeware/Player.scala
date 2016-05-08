@@ -13,20 +13,22 @@ object Player {
   def image = img(src := "spaceship.png").render
 }
 
-class Player(private var xCoord: Double = Dodge.screenWidth / 2 - Player.width / 2,
-             private var yCoord: Double = Dodge.screenHeight - 100,
-             val step: Double = 10,
-             val width: Double = Player.width,
-             val height: Double = Player.height) extends Renderable {
+class Player(private var xCoord: Int = Dodge.screenWidth / 2 - Player.width / 2,
+             private var yCoord: Int = Dodge.screenHeight - 100,
+             val speed: Int = 5,
+             val width: Int = Player.width,
+             val height: Int = Player.height) extends Renderable {
 
+  val shootingDelay = 200
   val bullets: mutable.Set[Bullet] = mutable.Set()
+  var lastShooting: Long = shootingDelay * 2
 
   def x = xCoord
 
   def y = yCoord
 
   def moveLeft(): Unit = {
-    val newX = xCoord - step
+    val newX = xCoord - speed
     if (newX < 0) {
       xCoord = 0
     }
@@ -36,7 +38,7 @@ class Player(private var xCoord: Double = Dodge.screenWidth / 2 - Player.width /
   }
 
   def moveRight(): Unit = {
-    val newX = xCoord + step
+    val newX = xCoord + speed
     if (newX + width > Dodge.screenWidth) {
       xCoord = Dodge.screenWidth - width
     } else {
@@ -45,7 +47,7 @@ class Player(private var xCoord: Double = Dodge.screenWidth / 2 - Player.width /
   }
 
   def initiateShoot() = {
-    bullets += Bullet.generate(x + width/2, y)
+    bullets += Bullet.generate(x + width / 2, y)
   }
 
   def moveBullets() = {
@@ -61,6 +63,21 @@ class Player(private var xCoord: Double = Dodge.screenWidth / 2 - Player.width /
     ctx.drawImage(Player.image, x, y, width, height)
     for (bullet <- bullets) {
       bullet.drawOn(ctx)
+    }
+  }
+
+  def update(kbd: KeyboardInput): Unit = {
+    if (kbd.isPressed("ArrowLeft")) {
+      moveLeft()
+    }
+    if (kbd.isPressed("ArrowRight")) {
+      moveRight()
+    }
+    if (kbd.isPressed(" ")) {
+      if (System.currentTimeMillis() - lastShooting > shootingDelay) {
+        initiateShoot()
+        lastShooting = System.currentTimeMillis()
+      }
     }
   }
 }
