@@ -16,8 +16,10 @@ class Bullet(private var xCoord: Int = 0,
              private var yCoord: Int = 0,
              val step: Int = 20,
              val width: Int = Bullet.width,
-             val height: Int = Bullet.height) extends Renderable {
+             val height: Int = Bullet.height)
+    extends Renderable {
 
+  val image = None
   var destroyed = false
 
   def x = xCoord

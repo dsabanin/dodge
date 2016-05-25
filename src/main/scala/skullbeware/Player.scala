@@ -6,19 +6,22 @@ import scala.collection.mutable
 import scalatags.JsDom.all._
 
 object Player {
-  val width = 36
+  val width = 30
 
   val height = 50
 
-  def image = img(src := "spaceship.png").render
+  def image = img(src := "spaceship2.png").render
 }
 
-class Player(private var xCoord: Int = Dodge.screenWidth / 2 - Player.width / 2,
-             private var yCoord: Int = Dodge.screenHeight - 100,
-             val speed: Int = 5,
-             val width: Int = Player.width,
-             val height: Int = Player.height) extends Renderable {
+class Player(
+    private var xCoord: Int = Dodge.screenWidth / 2 - Player.width / 2,
+    private var yCoord: Int = Dodge.screenHeight - 100,
+    val speed: Int = 5,
+    val width: Int = Player.width,
+    val height: Int = Player.height)
+    extends Renderable {
 
+  val image = Some(Player.image)
   val shootingDelay = 200
   val bullets: mutable.Set[Bullet] = mutable.Set()
   var lastShooting: Long = shootingDelay * 2
@@ -31,8 +34,7 @@ class Player(private var xCoord: Int = Dodge.screenWidth / 2 - Player.width / 2,
     val newX = xCoord - speed
     if (newX < 0) {
       xCoord = 0
-    }
-    else {
+    } else {
       xCoord = newX
     }
   }
@@ -47,11 +49,21 @@ class Player(private var xCoord: Int = Dodge.screenWidth / 2 - Player.width / 2,
   }
 
   def moveUp(): Unit = {
-    yCoord -= speed
+    val newY = yCoord - speed
+    if (newY < 0) {
+      yCoord = 0
+    } else {
+      yCoord = newY
+    }
   }
 
   def moveDown(): Unit = {
-    yCoord += speed
+    val newY = yCoord + speed
+    if (newY + height > Dodge.screenHeight) {
+      yCoord = Dodge.screenHeight - height
+    } else {
+      yCoord = newY
+    }
   }
 
   def initiateShoot() = {

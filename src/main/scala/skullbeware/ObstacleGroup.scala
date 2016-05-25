@@ -10,41 +10,74 @@ object ObstacleGroup {
   val innerSpacing = 30
   val finalSpacing = 60
 
-  def layouts = List(
-                      """X..X..X""",
-                      """..XXX..""",
-                      """X.XXX.X""",
-                      """...X...
-                        |..X.X..
-                        |...X...""",
-                      """X.....X
-                        |.X...X.
-                        |..X.X..
-                        |...X...
-                        |..X.X..
-                        |.X...X.
-                        |X.....X""",
-                      """X..X..X
-                        |...X...""",
-                      """XXXXXXX
-                        |X.....X""",
-                      """.XX.XX.
-                        |.XXXXX.
-                        |.XXXXX.
-                        |..XXX..
-                        |...X...""",
-                      """.XXXXX.
-                        |..XXX..
-                        |.......
-                        |...X...""")
+  def layouts =
+    List("""X...X...X""",
+         """..XXXXX..""",
+         """X..XXX..X""",
+         """
+                        |...XXX...
+                        |..X...X..
+                        |...XXX...""",
+         """
+                        |X.......X
+                        |.X.....X.
+                        |..X...X..
+                        |...X.X...
+                        |....X....
+                        |...X.X...
+                        |..X...X..
+                        |.X.....X.
+                        |X.......X""",
+         """X...X...X
+                        |....X....""",
+         """XXXXXXXXX
+                        |XX.....XX""",
+         """..XX.XX..
+                        |..XXXXX..
+                        |..XXXXX..
+                        |...XXX...
+                        |....X....""",
+         """..XXXXX..
+                        |...XXX...
+                        |.........
+                        |....X....""",
+         """
+                        |.XXXXXXXX
+                        |.XXXXXXXX
+                        |.XXXXXXXX
+                        |.XXXXXXXX
+                        |.XXXXXXXX
+                        |.XXXXXXXX""",
+         """
+                        |...XXX...
+                        |.........
+                        |...XXX...
+                        |...XXX...
+                        |...XXX...
+                        |...XXX...
+                        |.........
+                        |..XX.XX..
+                        |..XX.XX..
+                        |..XXXXX..
+                        |..XX.XX..
+                        |..XX.XX..""",
+         """
+                        |XXXXXX...
+                        |XXXXX...X
+                        |XXXXXX..X""",
+         """
+          |XXXXXXXX.
+          |XXXXXXX
+          |X.XXX.X
+          |X.XXX.XX
+        """)
 
   def generate: ObstacleGroup = {
     new ObstacleGroup(Random.shuffle(layouts).head)
   }
 }
 
-class ObstacleGroup(var rawLayout: String,
-                    val cols: Int = 7) {
+class ObstacleGroup(var rawLayout: String, val cols: Int = 9) {
 
   val layout = parseLayout(rawLayout)
   val obstacles: mutable.Set[Obstacle] = mutable.Set()
@@ -57,12 +90,17 @@ class ObstacleGroup(var rawLayout: String,
 
   def generateObstacles(row: Int): Seq[Obstacle] = {
     for ((blk, idx) <- layout(row).zipWithIndex if blk == 1) yield {
-      Obstacle.generate(speed = 2, x = Some(blockSections(idx) + Obstacle.width / 2))
+      val obst = Obstacle.skull
+      obst.speed = 2
+      obst.x = blockSections(idx) + obst.width / 2
+      obst.y = -obst.height
+      obst
     }
   }
 
   def parseLayout(raw: String): Vector[Vector[Int]] = {
-    val rawLines: Vector[(String, Int)] = raw.stripMargin.split("\n").toVector.zipWithIndex
+    val rawLines: Vector[(String, Int)] =
+      raw.stripMargin.split("\n").toVector.zipWithIndex
     val layoutLines = for ((line, idx) <- rawLines) yield {
       val re = """^\s*(\d+)\s*$""".r
 
@@ -106,6 +144,9 @@ class ObstacleGroup(var rawLayout: String,
       obstacles ++= buffer.pop
     }
     for (obstacle <- obstacles if obstacle.isGone) {
+      if (!obstacle.destroyed) {
+        Dodge.gameStats.incr("dodged")
+      }
       obstacles -= obstacle
     }
   }
@@ -117,5 +158,4 @@ class ObstacleGroup(var rawLayout: String,
       obstacle.drawOn(ctx)
     }
   }
-
 }

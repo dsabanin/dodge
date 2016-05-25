@@ -5,30 +5,34 @@ import org.scalajs.dom.html
 
 import scala.collection.mutable
 import scala.scalajs.js.annotation.JSExport
-import scala.util.Random
+import scalatags.JsDom
 import scalatags.JsDom.all._
 
-@JSExport object Dodge {
+@JSExport
+object Dodge {
 
-  val obstacleSpeed = 50
+  val obstacleSpeed = 30
   val obstacleGenSpeed = 70
   val screenWidth = 600
   val screenHeight = 600
   var obstacleGroupLimit = 5
+
   val mainCanvas = createCanvas()
   val mainCtx = canvasCtx(mainCanvas)
+  val collisionCtx = canvasCtx(createCanvas(hide = true))
   val bufferCanvas = createCanvas(hide = true)
   val bufferCtx = canvasCtx(bufferCanvas)
   var player = new Player
   var obstacleGroups: mutable.Set[ObstacleGroup] = mutable.Set()
   val kbd = new KeyboardInput
+  val gameStats = new Stats
 
   @JSExport def main(): Unit = {
-    clear(mainCtx)
     dom.document.addEventListener("keydown", kbd.down _, false)
     dom.document.addEventListener("keyup", kbd.up _, false)
     dom.setInterval(generateObstacleGroups _, obstacleGenSpeed)
     dom.window.requestAnimationFrame(loop _)
+    MusicPlayer.play()
   }
 
   def createCanvas(hide: Boolean = false): html.Canvas = {
@@ -42,7 +46,8 @@ import scalatags.JsDom.all._
     cv
   }
 
-  def canvasCtx(canvas: html.Canvas) = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+  def canvasCtx(canvas: html.Canvas) =
+    canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
   def loop(timer: Double): Unit = {
     player.update(kbd)
@@ -50,7 +55,20 @@ import scalatags.JsDom.all._
     player.moveBullets()
     shootObstacles()
     renderLoop()
+    renderStats()
     testForGameOver()
+  }
+
+  def renderStats(): Unit = {
+    dom.document.getElementById("stats").innerHTML = ""
+    var attrs = Vector[JsDom.TypedTag[html.LI]]()
+    gameStats.foreach { (pair) =>
+      val (name, v) = pair
+      val tag = li(strong(name.capitalize + ": "), v)
+      attrs = attrs.:+(tag)
+    }
+    val st = ul(attrs).render
+    dom.document.getElementById("stats").appendChild(st)
   }
 
   def renderLoop(): Unit = {
@@ -82,6 +100,8 @@ import scalatags.JsDom.all._
   def resetGame(): Unit = {
     obstacleGroups = mutable.Set()
     player = new Player
+    gameStats.reset()
+    MusicPlayer.reset()
     clear(mainCtx)
     dom.window.requestAnimationFrame(loop _)
   }
@@ -100,13 +120,23 @@ import scalatags.JsDom.all._
   }
 
   def isTouching(a: Renderable, b: Renderable): Boolean = {
-    a.xs.intersect(b.xs).nonEmpty && a.ys.intersect(b.ys).nonEmpty
+    val xInter = a.xs.intersect(b.xs)
+    if (xInter.nonEmpty) {
+      val yInter = a.ys.intersect(b.ys)
+      if (yInter.nonEmpty) {
+        if (!(a.isEmptyAt(xInter, yInter, Dodge.collisionCtx) || b.isEmptyAt(xInter, yInter, Dodge.collisionCtx))) {
+          return true
+        }
+      }
+    }
+    false
   }
 
   def generateObstacleGroups(): Unit = {
     if (obstacleGroups.size < 1) {
       obstacleGroups += ObstacleGroup.generate
-    } else if(obstacleGroups.forall(_.isMaterialized) && obstacleGroups.size < obstacleGroupLimit) {
+    } else if (obstacleGroups.forall(_.isMaterialized) &&
+               obstacleGroups.size < obstacleGroupLimit) {
       obstacleGroups += ObstacleGroup.generate
     }
   }
