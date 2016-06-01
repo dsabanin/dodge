@@ -1,8 +1,5 @@
 package skullbeware
 
-/**
-  * Created by dsabanin on 5/9/16.
-  */
 class Stats {
   val attrs =
     new scala.collection.mutable.HashMap[String, Int].withDefaultValue(0)

@@ -1,16 +1,22 @@
 package skullbeware
 
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+
 import org.scalajs.dom
+import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.html
 
 import scala.collection.mutable
+import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom
 import scalatags.JsDom.all._
 
 @JSExport
-object Dodge {
+object Dodge extends js.JSApp {
 
+  val debug = false // true
+  val neverDie = false // true
   val obstacleSpeed = 30
   val obstacleGenSpeed = 70
   val screenWidth = 600
@@ -26,13 +32,26 @@ object Dodge {
   var obstacleGroups: mutable.Set[ObstacleGroup] = mutable.Set()
   val kbd = new KeyboardInput
   val gameStats = new Stats
+  var level: Option[List[String]] = None
+  var overlays: mutable.Set[TextOverlay] = mutable.Set()
 
-  @JSExport def main(): Unit = {
+  @JSExport
+  def main(): Unit = {
     dom.document.addEventListener("keydown", kbd.down _, false)
     dom.document.addEventListener("keyup", kbd.up _, false)
-    dom.setInterval(generateObstacleGroups _, obstacleGenSpeed)
+    loadLevel("level1.dat") {
+      dom.setInterval(generateObstacleGroups _, obstacleGenSpeed)
+    }
     dom.window.requestAnimationFrame(loop _)
     MusicPlayer.play()
+    overlays += new TextOverlay("Let the Dodging begin!")
+  }
+
+  def loadLevel(name: String)(whenDone: => Unit) = {
+    val future = Ajax.get(dataPath(name), responseType = "text").onComplete { xhr =>
+      level = Option(Option(xhr.get.response).get.toString.split("""\n\n""").toList)
+      whenDone
+    }
   }
 
   def createCanvas(hide: Boolean = false): html.Canvas = {
@@ -51,12 +70,21 @@ object Dodge {
 
   def loop(timer: Double): Unit = {
     player.update(kbd)
-    moveObstacle()
+    if(!kbd.isPressed("p")) {
+      moveObstacle()
+    }
     player.moveBullets()
     shootObstacles()
+    val gameOver = testForGameOver()
+    if(gameOver) {
+      overlays += new TextOverlay("Game over!", 0.05)
+      dom.setTimeout(resetGame _, 700)
+    }
     renderLoop()
     renderStats()
-    testForGameOver()
+    if (!testForGameOver()) {
+      dom.window.requestAnimationFrame(loop _)
+    }
   }
 
   def renderStats(): Unit = {
@@ -73,9 +101,16 @@ object Dodge {
 
   def renderLoop(): Unit = {
     clear(bufferCtx)
-    player.drawOn(bufferCtx)
     for (obstacle <- obstacleGroups) {
       obstacle.drawOn(bufferCtx)
+    }
+    player.drawOn(bufferCtx)
+    for (overlay <- overlays) {
+      if(overlay.isGone) {
+        overlays -= overlay
+      } else {
+        overlay.drawOn(bufferCtx)
+      }
     }
     renderBuffer()
   }
@@ -89,12 +124,8 @@ object Dodge {
     }
   }
 
-  def testForGameOver(): Unit = {
-    if (obstacleGroups.exists(isTouchingGroup(_, player))) {
-      resetGame()
-    } else {
-      dom.window.requestAnimationFrame(loop _)
-    }
+  def testForGameOver(): Boolean = {
+    !neverDie && obstacleGroups.exists(isTouchingGroup(_, player))
   }
 
   def resetGame(): Unit = {
@@ -124,7 +155,8 @@ object Dodge {
     if (xInter.nonEmpty) {
       val yInter = a.ys.intersect(b.ys)
       if (yInter.nonEmpty) {
-        if (!(a.isEmptyAt(xInter, yInter, Dodge.collisionCtx) || b.isEmptyAt(xInter, yInter, Dodge.collisionCtx))) {
+        if (!(a.isEmptyAt(xInter, yInter, Dodge.collisionCtx) ||
+                b.isEmptyAt(xInter, yInter, Dodge.collisionCtx))) {
           return true
         }
       }

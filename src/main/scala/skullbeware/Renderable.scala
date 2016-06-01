@@ -20,6 +20,10 @@ trait Renderable {
 
   def ys = y.to(y + height).by(1)
 
+  def middleX = width / 2
+
+  def middleY = height / 2
+
   def isEmptyAt(xs: Seq[Int],
                 ys: Seq[Int],
                 ctx: dom.CanvasRenderingContext2D): Boolean = {

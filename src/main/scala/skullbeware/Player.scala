@@ -10,7 +10,7 @@ object Player {
 
   val height = 50
 
-  def image = img(src := "spaceship2.png").render
+  def image = img(src := assetPath("spaceship2.png")).render
 }
 
 class Player(
