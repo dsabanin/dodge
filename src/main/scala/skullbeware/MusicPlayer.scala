@@ -6,7 +6,7 @@ import org.scalajs.dom.html.Audio
 
 object MusicPlayer {
 
-  val musicVolume: Double = 0.5
+  val musicVolume: Double   = 0.5
   val effectsVolume: Double = 0.7
 
   var currentSong: Option[html.Audio] = None
@@ -32,7 +32,7 @@ object MusicPlayer {
   def stop() = {
     currentSong match {
       case Some(song) => song.pause()
-      case _ => // nothing
+      case _          => // nothing
     }
   }
 

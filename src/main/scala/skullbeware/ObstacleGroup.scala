@@ -17,10 +17,10 @@ object ObstacleGroup {
 
 class ObstacleGroup(var rawLayout: String, val cols: Int = 9) {
 
-  val layout = parseLayout(rawLayout)
+  val layout                           = parseLayout(rawLayout)
   val obstacles: mutable.Set[Obstacle] = mutable.Set()
-  val blockWidth = Dodge.screenWidth / cols
-  val blockSections = calculateBlockSections
+  val blockWidth                       = Dodge.screenWidth / cols
+  val blockSections                    = calculateBlockSections
   val buffer = new mutable.Stack[Seq[Obstacle]]().pushAll {
     layout.indices.map(generateObstacles(_))
   }
@@ -28,8 +28,8 @@ class ObstacleGroup(var rawLayout: String, val cols: Int = 9) {
   def isMaterialized = buffer.isEmpty
 
   def generateObstacles(row: Int): Seq[Obstacle] = {
-    val obstacles: Seq[Tuple2[Obstacle, Int]] =
-      for ((blk, idx) <- layout(row).zipWithIndex if blk != ".") yield {
+    val obstacles = for ((blk, idx) <- layout(row).zipWithIndex if blk != ".")
+      yield {
         val obst = blk match {
           case "X" => Obstacle.skull
           case "K" => Obstacle.kitten
@@ -44,15 +44,13 @@ class ObstacleGroup(var rawLayout: String, val cols: Int = 9) {
     for ((obst, idx) <- obstacles) yield {
       obst.speed = 2
       obst.x = blockSections(idx) + blockWidth / 2 - obst.middleX
-      println(maxHeight)
       obst.y = -maxHeight
       obst
     }
   }
 
   def parseLayout(raw: String): Vector[Vector[String]] = {
-    val rawLines: Vector[(String, Int)] =
-      raw.stripMargin.split("\n").toVector.zipWithIndex
+    val rawLines: Vector[(String, Int)] = raw.stripMargin.split("\n").toVector.zipWithIndex
 
     val layoutLines = for ((line, idx) <- rawLines) yield {
       val re = """^\s*(\d+)\s*$""".r
@@ -70,7 +68,7 @@ class ObstacleGroup(var rawLayout: String, val cols: Int = 9) {
 
     val lines = layoutLines ++ Vector(emptyLines(ObstacleGroup.finalSpacing))
     for (line <- lines.flatten) yield {
-      for (s <- line.split("").toVector if s != "") yield s
+      for (s  <- line.split("").toVector if s != "") yield s
     }
   }
 
@@ -99,7 +97,7 @@ class ObstacleGroup(var rawLayout: String, val cols: Int = 9) {
 
   def isGone: Boolean = buffer.isEmpty && obstacles.forall(_.isGone)
 
-  def drawOn(ctx: dom.CanvasRenderingContext2D): Unit = {
+  def drawOn(ctx: dom.CanvasRenderingContext2D, timeDiff: Double): Unit = {
     if (Dodge.debug) {
       for (section <- calculateBlockSections) {
         ctx.fillStyle = "red"
@@ -107,7 +105,7 @@ class ObstacleGroup(var rawLayout: String, val cols: Int = 9) {
       }
     }
     for (obstacle <- obstacles) {
-      obstacle.drawOn(ctx)
+      obstacle.drawOn(ctx, timeDiff)
     }
   }
 }

@@ -1,8 +1,7 @@
 package skullbeware
 
 class Stats {
-  val attrs =
-    new scala.collection.mutable.HashMap[String, Int].withDefaultValue(0)
+  val attrs = new scala.collection.mutable.HashMap[String, Int].withDefaultValue(0)
 
   def incr(key: String) = {
     attrs(key) += 1

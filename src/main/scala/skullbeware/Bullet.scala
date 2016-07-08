@@ -19,14 +19,13 @@ class Bullet(private var xCoord: Int = 0,
              val height: Int = Bullet.height)
     extends Renderable {
 
-  val image = None
   var destroyed = false
 
   def x = xCoord
 
   def y = yCoord
 
-  def drawOn(ctx: dom.CanvasRenderingContext2D): Unit = {
+  def drawOn(ctx: dom.CanvasRenderingContext2D, timeDiff: Double): Unit = {
     ctx.fillStyle = "blue"
     ctx.fillRect(x, y, width, height)
   }
